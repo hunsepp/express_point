@@ -82,18 +82,14 @@ app.post('/api/use', async (req, res) => {
 
 // 토큰 적립/사용 내역
 app.get('/api/list', (req, res) => {
-    axios.get(`https://th-api.beta.klaytn.io/v1/kct/ft/${contractAddress}`, {
+    axios.get(`https://th-api.beta.klaytn.io/v1/kct/ft/${contractAddress}/transfer`, {
         headers: {
             "Authorization": 'Basic ' + Buffer.from(process.env.ACCESS_KEY + ':' + process.env.SECRET_ACCESS).toString('base64'),
-            "Content-Type": "application/json",
             "x-krn": 'krn:1001:th' 
         }
     }).then(data => {
-        console.log(data)
-        res.send(data);
+        res.json(data.data);
     });
-
-    res.send('')
 })
 
 // 서버 시작
