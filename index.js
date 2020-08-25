@@ -8,10 +8,14 @@ const app = express();
 const port = 5000;
 const contractAddress = '0xDe04E71ff30eCA98cdd30Edc111AFD2386ae029d';
 
+//kakao 관련 라우터 가져오기
+const kakaoRouter = require("./routes/kakaoRouter");
 dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+//kakao 관련 라우터 등록
+app.use("/api/kakao",kakaoRouter);
 
 //caver
 const option = {
