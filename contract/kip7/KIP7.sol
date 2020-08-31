@@ -39,8 +39,6 @@ contract KIP7 is KIP13, IKIP7 {
     uint256 private _totalSupply;
     
     address private _owner;
-    
-    uint256 private _legacySupply;
 
     /*
      *     bytes4(keccak256('totalSupply()')) == 0x18160ddd
@@ -69,10 +67,6 @@ contract KIP7 is KIP13, IKIP7 {
         return _owner;
     }
     
-    function legacySupply() public view returns (uint256) {
-        return _legacySupply;
-    }
-
     /**
      * @dev See `IKIP7.totalSupply`.
      */
@@ -208,7 +202,6 @@ contract KIP7 is KIP13, IKIP7 {
         require(msg.sender == _owner, "only owner");
 
         _totalSupply = _totalSupply.add(amount);
-        _legacySupply = _legacySupply.add(amount);
         _balances[account] = _balances[account].add(amount);
         emit Transfer(address(0), account, amount);
     }
