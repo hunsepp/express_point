@@ -1,34 +1,42 @@
 const express = require("express");
-const KakaoStrategy = require("passport-kakao").Strategy;
-const passport = require("passport");
-
-const kakaoRoutes = express.Router();
 const router = express.Router();
+const { walletHeaders } = require("../kas");
+const User = require("../model/user");
 
-const kakaoKey = {
-  clientID: "02ced8bfeeec0a4a05a7ba7f1931de94",
-  clientSecret: "ujahCdiADg9fg3J8JAHfbjJ1kGzE6lnA",
-  callbackURL: "http://localhost:3000/api/kakao/oauth/callback",
-};
+// 카카오 계정 연동/로그인
+router.post("/", (req, res) => {
+  const kakaoInfo = req.body;
 
-passport.use(
-  "kakao-login",
-  new KakaoStrategy(kakaoKey, (accessToken, refreshToken, profile, done) => {
-    console.log(profile);
-  })
-);
+  User.findOne({ kakaoId: kakaoInfo.profile.id }, async (err, user) => {
+    if (err) return res.status(500).json({ error: err });
 
-kakaoRoutes.get("/oauth/", () => {
-  console.log("바보멍청이");
-  passport.authenticate("kakao-login");
+    if (!user) {
+      user = new User();
+      user.kakaoId = kakaoInfo.profile.id;
+
+      await axios
+        .post("https://wallet-api.beta.klaytn.io/v2/account", "", walletHeaders)
+        .then(({ data }) => {
+          user.address = data.result.address;
+        });
+    }
+
+    user.access = kakaoInfo.response.access_token;
+    user.refresh = kakaoInfo.response.refresh_token;
+
+    user.save((err) => {
+      if (err) res.json({ error: err });
+      else res.json({ result: 1, user });
+    });
+  });
 });
 
-kakaoRoutes.get(
-  "/oauth/callback",
-  passport.authenticate("kakao-login", {
-    successRedirect: "/",
-    failureRedirect: "/api/auth/fail",
-  })
-);
+// 액세스 토큰으로 정보 확인
+router.get("/:token", (req, res) => {
+  User.findOne({ access: req.params.token }, (err, user) => {
+    if (err || !user) res.json({ result: 0, error: err });
+    else res.json({ result: 1, user });
+  });
+});
 
-module.exports = kakaoRoutes;
+module.exports = router;
