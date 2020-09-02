@@ -11,18 +11,18 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // 몽고 디비 연결
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
+mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false})
     .then(() => console.log('connected to mongodb'))
     .catch(e => console.error(e));
 
 // 라우터 설정
 const testRouter = require('./routes/testRouter');
 const menuRouter = require('./routes/menuRouter');
-const kakaoRouter = require('./routes/kakaoRouter');
+const storeRouter = require('./routes/storeRouter');
 
 app.use('/api', testRouter);
 app.use('/api/menu', menuRouter);
-app.use('/api/kakao', kakaoRouter);
+app.use('/api/store', storeRouter);
 
 // 서버 시작
 app.listen(port, () => {

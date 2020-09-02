@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Menu = require('../model/menu');
+const Menu = require('../model/Menu');
 
 // 메뉴 등록
 router.post('/', (req, res) => {
