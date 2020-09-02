@@ -1,41 +1,51 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
+const axios = require("axios");
 const { walletHeaders } = require("../kas");
-const User = require("../model/user");
+const Kuser = require("../model/kuser");
 
-// 카카오 계정 연동/로그인
-router.post("/", (req, res) => {
-  const kakaoInfo = req.body;
-
-  User.findOne({ kakaoId: kakaoInfo.profile.id }, async (err, user) => {
+router.post("/signUp", (req, res) => {
+  Kuser.findOne({ kakaoId: req.body.user_id }, async (err, kuser) => {
+    //디비 조회 중 에러 발생시
     if (err) return res.status(500).json({ error: err });
+    //디비에 저장된 유저 정보가 없을 경우
+    if (!kuser) {
+      kuser = new Kuser();
+      //카카오 로그인 API에서 받아온 정보로 모델에 값 채우기
+      kuser.kakaoId = req.body.user_id;
+      kuser.nickName = req.body.user_nickname;
 
-    if (!user) {
-      user = new User();
-      user.kakaoId = kakaoInfo.profile.id;
+      //이미지 url에서 디비에 저장하기
+      const imgURL = req.body.user_thumbnail_image;
+      //kuser.img.data = fs.readFileSync(imgURL);
+      await axios.get(imgURL).then(({ data }) => {
+        kuser.img.data = Buffer.from(data, "utf-8");
+      });
+      kuser.img.contentType = "image/png";
 
+      //KAS에서 새 주소 생성해서 주소 어트리뷰트 값 넣기
       await axios
         .post("https://wallet-api.beta.klaytn.io/v2/account", "", walletHeaders)
         .then(({ data }) => {
-          user.address = data.result.address;
+          kuser.address = data.result.address;
         });
     }
 
-    user.access = kakaoInfo.response.access_token;
-    user.refresh = kakaoInfo.response.refresh_token;
+    kuser.access_token = req.body.user_access_token;
+    kuser.refresh_token = req.body.user_refresh_token;
 
-    user.save((err) => {
-      if (err) res.json({ error: err });
-      else res.json({ result: 1, user });
+    //console.log("★kuser", kuser);
+
+    kuser.save(function (err) {
+      if (err) {
+        console.error(err);
+        res.json({ result: 0 });
+        return;
+      }
+
+      res.json({ result: 1, kuser });
     });
-  });
-});
-
-// 액세스 토큰으로 정보 확인
-router.get("/:token", (req, res) => {
-  User.findOne({ access: req.params.token }, (err, user) => {
-    if (err || !user) res.json({ result: 0, error: err });
-    else res.json({ result: 1, user });
   });
 });
 
