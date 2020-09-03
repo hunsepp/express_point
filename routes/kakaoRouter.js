@@ -16,13 +16,13 @@ router.post("/signUp", (req, res) => {
       kuser.kakaoId = req.body.user_id;
       kuser.nickName = req.body.user_nickname;
 
-      //이미지 url에서 디비에 저장하기
-      const imgURL = req.body.user_thumbnail_image;
-      //kuser.img.data = fs.readFileSync(imgURL);
-      await axios.get(imgURL).then(({ data }) => {
-        kuser.img.data = Buffer.from(data, "utf-8");
-      });
-      kuser.img.contentType = "image/png";
+      // //이미지 url에서 디비에 저장하기
+      // const imgURL = req.body.user_thumbnail_image;
+      // //kuser.img.data = fs.readFileSync(imgURL);
+      // await axios.get(imgURL).then(({ data }) => {
+      //   kuser.img.data = Buffer.from(data, "utf-8");
+      // });
+      // kuser.img.contentType = "image/png";
 
       //KAS에서 새 주소 생성해서 주소 어트리뷰트 값 넣기
       await axios
@@ -48,5 +48,13 @@ router.post("/signUp", (req, res) => {
     });
   });
 });
+
+// 액세스 토큰으로 유저 정보 확인
+router.get('/:token', (req, res) => {
+  Kuser.findOne({access_token: req.params.token}, (err, kuser) => {
+      if(err) res.json({result: 0, error: err});
+      else res.json({result: 1, kuser});
+  })
+})
 
 module.exports = router;

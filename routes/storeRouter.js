@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
 
     Store.findOne({kakaoId: kakaoInfo.profile.id}, async (err, store) => {
         if(err) return res.status(500).json({error: err});
-
+        
         if(!store) {
             store = new Store();
             store.kakaoId = kakaoInfo.profile.id;
@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
 
         store.access = kakaoInfo.response.access_token;
         store.refresh = kakaoInfo.response.refresh_token;
-
+        
         store.save(err => {
             if(err) res.json({error: err});
             else res.json({result: 1, store});
@@ -44,6 +44,14 @@ router.put('/:account', (req, res) => {
     Store.findOneAndUpdate({account: req.params.account}, req.body, {new: true}, (err, store) => {
         if(err) res.json({result: 0, error: err});
         else res.json({result: 1, store});
+    })
+})
+
+// 매장 목록
+router.get('/', (req, res) => {
+    Store.find({approve: "승인"}, (err, stores) => {
+        if(err) res.json({result: 0, error: err});
+        else res.json({result: 1, stores});
     })
 })
 

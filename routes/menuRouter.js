@@ -5,7 +5,7 @@ const Menu = require('../model/Menu');
 // 메뉴 등록
 router.post('/', (req, res) => {
     const menu = new Menu();
-    menu.kakaoId = req.body.kakaoId;
+    menu.store = req.body.id;
     menu.name = req.body.name;
     menu.price = req.body.price;
 
@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
 
 // 메뉴 목록
 router.get('/:id', (req, res) => {
-    Menu.find({kakaoId: req.params.id}, (err, menus) => {
+    Menu.find({store: req.params.id}, (err, menus) => {
         if(err) res.json({result: 0, error: err});
         else res.json({result: 1, menus});
     })

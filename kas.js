@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // point contract
-const pointContract = '0x8885aAb9dA1B41e1e39941084D54f7c2a85FBc56';
+const pointContract = '0xd993dbe444b7f8ef11f321bab815280fea77ec10';
 
 // point contract instance
 const getPointContract = () => {

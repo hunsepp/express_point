@@ -102,7 +102,6 @@ router.get('/test', async (req, res) => {
     const callByte = caver.abi.encodeFunctionCall(KIP7ABI[9], 
         ['0xa85baDfd203AE6FABFFa302D5470854Eee2385D7', 5]
     )
-    res.send(callByte);
 
     axios.post('https://wallet-api.beta.klaytn.io/v2/tx/contract/execute',{
         "from": "0xc2d9c16bee571c3baf98c00e321052c4d4095859",
