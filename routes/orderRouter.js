@@ -14,6 +14,7 @@ router.post('/', (req, res) => {
     order.total = total;
     order.menus = selectList;
     order.point = point
+    order.address = address;
 
     order.save(err => {
         if(err) res.json({result: 0, error: err});
@@ -47,6 +48,16 @@ router.get('/:id', (req, res) => {
     .exec((err, order) => {
         if(err) res.json({result: 0, error: err});
         else res.json({result: 1, order});
+    })
+})
+
+// 주문 리스트
+router.get('/list/:address', (req, res) => {
+    Order.find({address: req.params.address})
+    .populate('store')
+    .exec((err, orders) => {
+        if(err) res.json({result: 0, error: err});
+        else res.json({result: 1, orderList: orders});
     })
 })
 

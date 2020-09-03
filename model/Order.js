@@ -12,6 +12,7 @@ const orderSchema = new mongoose.Schema({
     create: {type: Date, default: Date.now},
     point: Number,
     txHash: String,
+    address: String,
 });
 
 module.exports = mongoose.model('Order', orderSchema);
