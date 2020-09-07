@@ -1,12 +1,17 @@
 const Caver = require('caver-js');
 const KIP7ABI = require('./deploy/KIP7ABI.json');
 const KIP7Bytecode = require('./deploy/KIP7Bytecode.json');
+const KIP17ABI = require('./deploy/KIP17ABI.json');
+const KIP17Bytecode = require('./deploy/KIP17Bytecode.json');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
 // point contract
-const pointContract = '0xd993dbe444b7f8ef11f321bab815280fea77ec10';
+const pointContract = '0x674a77c1ab37ef710398a6fc689b397ab87d92dd';
+
+// 관리자 account
+const manageAccount = '0xc2d9c16bee571c3baf98c00e321052c4d4095859';
 
 // point contract instance
 const getPointContract = () => {
@@ -46,7 +51,10 @@ module.exports = {
     caver,
     KIP7ABI,
     KIP7Bytecode,
+    KIP17ABI,
+    KIP17Bytecode,
     pointContract,
+    manageAccount,
     getPointContract,
     walletHeaders,
     historyHeaders,

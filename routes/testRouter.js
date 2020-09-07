@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {caver, walletHeaders, historyHeaders, KIP7ABI, KIP7Bytecode} = require('../kas');
+const {caver, walletHeaders, historyHeaders, KIP7ABI, KIP17ABI, KIP17Bytecode} = require('../kas');
 const axios = require('axios');
 const testABI = require('../deploy/testABI.json');
 
@@ -77,11 +77,11 @@ router.get('/deploy', async (req, res) => {
         "from": "0xc2d9c16bee571c3baf98c00e321052c4d4095859",
         "value": "0x0",
         "submit": true,
-        "gas_limit": 3000000,
+        "gas_limit": 30000000,
         "input": caver.abi.encodeContractDeploy(
-            KIP7ABI,
-            `0x${KIP7Bytecode.object}`,
-            "배포"
+            KIP17ABI,
+            `0x${KIP17Bytecode.object}`,
+            "Kunité", 1, 3
         )
     }, walletHeaders);
 
@@ -89,8 +89,7 @@ router.get('/deploy', async (req, res) => {
     setTimeout(async () => {
         const result = await axios.get(`https://wallet-api.beta.klaytn.io/v2/tx/${data.result.transaction_hash}`, walletHeaders);
         
-        contractAddress = result.data.result.contractAddress;
-        res.send(contractAddress);
+        res.send(result.data.result.contractAddress);
     }, 3000);
 })
 
@@ -98,17 +97,20 @@ router.get('/deploy', async (req, res) => {
 router.get('/test', async (req, res) => {
     //console.log(KIP7ABI[9]); // 민트
     //console.log(KIP7ABI[15]); // 번
+    // res.send(KIP17ABI[14]); // 민트
+    res.json(KIP17ABI); return;
 
-    const callByte = caver.abi.encodeFunctionCall(KIP7ABI[9], 
-        ['0xa85baDfd203AE6FABFFa302D5470854Eee2385D7', 5]
+    const callByte = caver.abi.encodeFunctionCall(KIP17ABI[14], 
+        ['0xc2d9c16bee571c3baf98c00e321052c4d4095859']
     )
 
     axios.post('https://wallet-api.beta.klaytn.io/v2/tx/contract/execute',{
         "from": "0xc2d9c16bee571c3baf98c00e321052c4d4095859",
-        "to": "0xd993dbe444b7f8ef11f321bab815280fea77ec10",
+        "to": "0x209c0e8290688031d233493c2fab40436c49eaa3",
         "value": "0x0",
         "input": callByte,
-        "submit": true
+        "submit": true,
+        "gas_limit": 3000000
     }, walletHeaders)
     .then(({data}) => {
         console.log(data.result);
