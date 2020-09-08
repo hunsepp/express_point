@@ -22,6 +22,7 @@ const storeRouter = require('./routes/storeRouter');
 const kakaoRouter = require("./routes/kakaoRouter");
 const orderRouter = require('./routes/orderRouter');
 const pointRouter = require('./routes/pointRouter');
+const approveRouter = require('./routes/approveRouter');
 
 app.use('/api', testRouter);
 app.use('/api/menu', menuRouter);
@@ -29,6 +30,7 @@ app.use('/api/store', storeRouter);
 app.use("/api/kakao", kakaoRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/point', pointRouter);
+app.use('/api/approve', approveRouter);
 
 // 서버 시작
 app.listen(port, () => {
