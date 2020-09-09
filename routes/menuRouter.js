@@ -8,6 +8,7 @@ router.post('/', (req, res) => {
     menu.store = req.body.id;
     menu.name = req.body.name;
     menu.price = req.body.price;
+    menu.category = req.body.category;
 
     menu.save(err => {
         if(err) res.json({result: 0, error: err});
@@ -21,7 +22,14 @@ router.get('/:id', (req, res) => {
     .populate('store')
     .exec((err, menus) => {
         if(err) res.json({result: 0, error: err});
-        else res.json({result: 1, menus});
+
+        // 카테고리 목록
+        Menu.find({store: req.params.id})
+        .distinct('category')
+        .exec((err, category) => {
+            if(err) res.json({result: 0, error: err});
+            else res.json({result: 1, menus, category});
+        })
     })
 })
 
