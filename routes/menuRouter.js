@@ -17,7 +17,9 @@ router.post('/', (req, res) => {
 
 // 메뉴 목록
 router.get('/:id', (req, res) => {
-    Menu.find({store: req.params.id}, (err, menus) => {
+    Menu.find({store: req.params.id})
+    .populate('store')
+    .exec((err, menus) => {
         if(err) res.json({result: 0, error: err});
         else res.json({result: 1, menus});
     })

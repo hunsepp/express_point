@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
     point: Number,
     txHash: String,
     address: String,
+    stampHash: String,
 });
 
 module.exports = mongoose.model('Order', orderSchema);
