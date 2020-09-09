@@ -16,21 +16,23 @@ mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopolo
 .catch(e => console.error(e));
 
 // 라우터 설정
-const testRouter = require('./routes/testRouter');
-const menuRouter = require('./routes/menuRouter');
-const storeRouter = require('./routes/storeRouter');
+const testRouter = require("./routes/testRouter");
+const menuRouter = require("./routes/menuRouter");
+const storeRouter = require("./routes/storeRouter");
 const kakaoRouter = require("./routes/kakaoRouter");
 const orderRouter = require('./routes/orderRouter');
 const pointRouter = require('./routes/pointRouter');
 const approveRouter = require('./routes/approveRouter');
+const uploadRouter = require("./routes/uploadRouter");
 
-app.use('/api', testRouter);
-app.use('/api/menu', menuRouter);
-app.use('/api/store', storeRouter);
+app.use("/api", testRouter);
+app.use("/api/menu", menuRouter);
+app.use("/api/store", storeRouter);
 app.use("/api/kakao", kakaoRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/point', pointRouter);
 app.use('/api/approve', approveRouter);
+app.use("/api/upload", uploadRouter);
 
 // 서버 시작
 app.listen(port, () => {
