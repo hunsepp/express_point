@@ -7,19 +7,33 @@ const axios = require('axios');
 // 주문 등록
 router.post('/', async (req, res) => {
     const {selectList, total, address} = req.body;
-    const point = total * 0.01;
+    let point = req.body.point;
+
     const store = selectList[0].store;
 
     const order = new Order;
     order.store = store._id;
     order.total = total;
     order.menus = selectList;
-    order.point = point
     order.address = address;
 
     try {
+        let callPointByte;
+
+        // 포인트 사용
+        if(point) {
+            point = req.body.point * -1;
+            callPointByte = caver.abi.encodeFunctionCall(KIP7ABI[15], [address, point * -1]);
+
         // 포인트 적립
-        const callPointByte = caver.abi.encodeFunctionCall(KIP7ABI[9], [address, point]);
+        } else {
+            point = total * 0.01
+            callPointByte = caver.abi.encodeFunctionCall(KIP7ABI[9], [address, point]);
+        }
+        
+        order.point = point;
+        
+        // 포인트 트랜잭션 처리
         const {data} = await axios.post('https://wallet-api.beta.klaytn.io/v2/tx/contract/execute',{
             "from": manageAccount,
             "to": pointContract,
@@ -27,7 +41,8 @@ router.post('/', async (req, res) => {
             "input": callPointByte,
             "submit": true
         }, walletHeaders);
-        // 적립 성공
+        
+        // 트랜잭션 성공시 해시값 받아오기
         order.txHash = data.result.transaction_hash;
 
         // 스탬프 컨트랙트가 있을 경우 스탬프 적립
