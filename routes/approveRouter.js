@@ -47,4 +47,12 @@ router.put('/', (req, res) => {
     })
 })
 
+// 승인 요청
+router.post('/:account', (req, res) => {
+    Store.findOneAndUpdate({account: req.params.account}, {approve: '승인요청'}, {new: true}, (err, store) => {
+        if(err) res.json({result: 0, error: err});
+        else res.json({result: 1, store});
+    })
+})
+
 module.exports = router;

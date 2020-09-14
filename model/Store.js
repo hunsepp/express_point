@@ -13,6 +13,9 @@ const storeSchema = new mongoose.Schema({
     discription: {type: String},
     menus: [{type: mongoose.Schema.Types.ObjectId, ref: 'Menu'}],
     create: {type: Date, default: Date.now},
+    option: mongoose.Schema.Types.Mixed,
+    open: String,
+    close: String
 });
 
 module.exports = mongoose.model('Store', storeSchema);

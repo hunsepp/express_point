@@ -19,16 +19,31 @@ const upload = multer({
     },
     filename(req, file, cb) {
       const ext = path.extname(file.originalname);
-      cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
+      cb(null, req.params.account + ext);
     },
   }),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 // 이미지 업로드를 위한 API
 // upload의 single 메서드는 하나의 이미지를 업로드할 때 사용
-router.post("/storeRepresent", upload.any("storeImage"), (req, res) => {
+router.post("/:account", upload.any("storeImage"), (req, res) => {
   console.log(req.files);
   res.json({ url: `/img/${req.files[0].filename}`, result: "success" });
 });
+
+// 이미지 찾아오기
+router.get('/:account', (req, res) => {
+  fs.readFile(`uploads/${req.params.account}.jpg`, (err, data) => {
+    if(err) {
+      fs.readFile('uploads/main.jpg', (err, data) => {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
+      })
+    } else {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(data);
+    }
+  })
+})
 
 module.exports = router;
